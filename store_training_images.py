@@ -19,7 +19,11 @@ dir_list = os.listdir('people')
 if len(dir_list) == 0:
     no = 0
 else:
+<<<<<<< HEAD
     no = int(dir_list[-1].split('_')[0])
+=======
+    no = int(dir_list[-1].split('_')[0])+1
+>>>>>>> e1f7c598c6863fe2a55aa80995bc3b3b410b03b8
 name = str(no)+'_'+name
 
 db.write_employee_to_db(name,UID)

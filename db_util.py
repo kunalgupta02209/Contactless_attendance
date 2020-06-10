@@ -17,7 +17,7 @@ class database:
             codec_options=CodecOptions(tz_aware=True, tzinfo=TIMEZONE))
         self.name=[]
         self.attendance=[]
-
+        
     def write_employee_to_db(self, name, UID):
         attendance_db = self.client['ATTENDANCE_DB'].with_options(
             codec_options=CodecOptions(tz_aware=True, tzinfo=TIMEZONE))

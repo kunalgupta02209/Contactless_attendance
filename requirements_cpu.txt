@@ -8,3 +8,5 @@ opencv-python
 pyttsx3
 datetime
 pygame
+pymongo
+dnspython
