@@ -8,7 +8,7 @@ from datetime import datetime as dt
 from datetime import timedelta
 timezone = 'Asia/Calcutta'
 TIMEZONE = pytz.timezone(timezone)
-mongodb_url = "mongodb://127.0.0.1:27017/admin?compressors=zlib"
+mongodb_url = "mongodb+srv://muskanasmath:attendance123@attendance-db.4l4qt.gcp.mongodb.net/attendance-db?authSource=admin&replicaSet=atlas-qr4lca-shard-0&compressors=zlib&readPreference=primary&appname=MongoDB%20Compass&ssl=true"
 
 class database:
     def __init__(self):
