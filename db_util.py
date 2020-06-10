@@ -8,7 +8,7 @@ from datetime import datetime as dt
 from datetime import timedelta
 timezone = 'Asia/Calcutta'
 TIMEZONE = pytz.timezone(timezone)
-mongodb_url = "mongodb://muskanasmath:attendance123@attendance-db.4l4qt.gcp.mongodb.net/attendance-db?authSource=admin&replicaSet=atlas-qr4lca-shard-0&compressors=zlib&readPreference=primary&appname=MongoDB%20Compass&ssl=true"
+mongodb_url = "mongodb+srv://muskanasmath:attendance123@attendance-db.4l4qt.gcp.mongodb.net/attendance-db?authSource=admin&replicaSet=atlas-qr4lca-shard-0&compressors=zlib&readPreference=primary&appname=MongoDB%20Compass&ssl=true"
 
 class database:
     def __init__(self):
@@ -17,7 +17,7 @@ class database:
             codec_options=CodecOptions(tz_aware=True, tzinfo=TIMEZONE))
         self.name=[]
         self.attendance=[]
-
+        
     def write_employee_to_db(self, name, UID):
         attendance_db = self.client['ATTENDANCE_DB'].with_options(
             codec_options=CodecOptions(tz_aware=True, tzinfo=TIMEZONE))
