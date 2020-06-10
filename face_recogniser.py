@@ -45,17 +45,6 @@ data.view()
 model=load_model('face_reco2.MODEL')
 
 
-def test():
-    test_run=cv2.imread('1.jpg',1)
-    test_run=cv2.resize(test_run,(160,160))
-    #test_run=np.rollaxis(test_run,2,0)
-    test_run=test_run.astype('float')/255.0
-    test_run=np.expand_dims(test_run,axis=0)
-    test_run=e.calculate(test_run)
-    test_run=np.expand_dims(test_run,axis=0)
-    test_run=model.predict(test_run)[0]
-
-
 cap=cv2.VideoCapture(0)
 ret=True
 # test()
@@ -82,7 +71,8 @@ while ret:
                 for i in people.keys():
                     if(result==i):
                         label=people[i]['_id']
-                data.update(label)
+                        data.update(label)
+                        label=people[i]['name']
             else:
                 label='unknown'
 
