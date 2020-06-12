@@ -46,8 +46,8 @@ face_model=arc.arch()
 x_data=[]
 y_data=[]
 
-learning_rate=0.01
-epochs=27
+learning_rate=0.003
+epochs=100
 batch_size=32
 
 
