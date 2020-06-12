@@ -47,7 +47,7 @@ x_data=[]
 y_data=[]
 
 learning_rate=0.003
-epochs=100
+epochs=500
 batch_size=32
 
 
