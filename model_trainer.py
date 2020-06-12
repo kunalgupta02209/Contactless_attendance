@@ -10,6 +10,7 @@ from sklearn.model_selection import train_test_split
 from keras.utils import to_categorical
 from bson.codec_options import CodecOptions
 import pytz
+from db_util import database
 
 class emb:
     def __init__(self):
@@ -33,9 +34,10 @@ class DenseArchs:
         self.model.add(Activation('softmax'))
 
         return self.model
+db = database()
+data_training = db.read_images_for_training()
 
-
-n_classes= len(os.listdir('people'))
+n_classes= len(data_training.keys())
 
 e=emb()
 arc=DenseArchs(n_classes)
@@ -48,17 +50,15 @@ learning_rate=0.01
 epochs=27
 batch_size=32
 
-people=os.listdir('people')
 
-for x in people:
-    for i in os.listdir('people/'+x):
-        img=cv2.imread('people'+'/'+x+'/'+i,1)
-        img=cv2.resize(img,(160,160))
+for y, images in data_training.items():
+    for image in images:
+        img=cv2.resize(image,(160,160))
         img=img.astype('float')/255.0
         img=np.expand_dims(img,axis=0)
         embs=e.calculate(img)
         x_data.append(embs)
-        y_data.append(int(x.split('_')[0]))
+        y_data.append(y)
 
 
 x_data=np.array(x_data,dtype='float')

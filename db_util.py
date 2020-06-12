@@ -1,11 +1,14 @@
-
 import pymongo
+import gridfs
 import pandas as pd
+import numpy as np
 from pymongo.errors import DuplicateKeyError
 from bson.codec_options import CodecOptions
 import pytz
 from datetime import datetime as dt
 from datetime import timedelta
+import traceback
+import cv2
 timezone = 'Asia/Calcutta'
 TIMEZONE = pytz.timezone(timezone)
 mongodb_url = "mongodb+srv://muskanasmath:attendance123@attendance-db.4l4qt.gcp.mongodb.net/attendance-db?authSource=admin&replicaSet=atlas-qr4lca-shard-0&compressors=zlib&readPreference=primary&appname=MongoDB%20Compass&ssl=true"
@@ -18,14 +21,37 @@ class database:
         self.name=[]
         self.attendance=[]
         
-    def write_employee_to_db(self, name, UID):
+    def write_employee_to_db(self, name,image_array):
         attendance_db = self.client['ATTENDANCE_DB'].with_options(
             codec_options=CodecOptions(tz_aware=True, tzinfo=TIMEZONE))
+        fs = gridfs.GridFS(attendance_db)
+        image_id_arr = []
+        for i in image_array:
+            image_id_arr.append({'imageID': fs.put(i.tostring(), encoding='utf-8'), 'shape':i.shape, 'dtype': str(i.dtype)})
+        result_arr = attendance_db['ATTENDANCE_COL'].find({},{'_id'})
+        no = len(list(result_arr))
         try:
-            attendance_db['ATTENDANCE_COL'].insert_one({'_id':UID, 'name':name.split('_')[1], 'no': int(name.split('_')[0]),'attendance':0,'last_login':dt.now(TIMEZONE)-timedelta(days=2)})
+            attendance_db['ATTENDANCE_COL'].insert_one({'_id':'100'+str(no), 'name':name, 'no': no,'attendance':0,'last_login':dt.now(TIMEZONE)-timedelta(days=2), 'images':image_id_arr})
         except:
-            print("Name already exists")
+            print(traceback.format_exc())
         
+    def read_images_for_training(self):
+        attendance_db = self.client['ATTENDANCE_DB'].with_options(
+            codec_options=CodecOptions(tz_aware=True, tzinfo=TIMEZONE))
+        fs = gridfs.GridFS(attendance_db)
+        result_arr = attendance_db['ATTENDANCE_COL'].find()
+        training_data = {}
+        for result in result_arr:
+            images = result['images']
+            image_array = []
+            for image in images:
+                gOut = fs.get(image['imageID'])
+                img = np.frombuffer(gOut.read(), dtype=np.uint8)
+                img = np.reshape(img, image['shape'])
+                image_array.append(img)
+            training_data[result['no']] = image_array
+        return training_data
+
     def update(self,UID):
         result = self.db.ATTENDANCE_COL.find_one({'_id':UID})
         last_login = result['last_login']
@@ -65,7 +91,7 @@ class database:
         records_att=self.db.ATTENDANCE_COL.find()
         df = pd.DataFrame(data=list(records_att))
         df.rename({'_id':'UID'},axis=1,inplace=True)
-        df.drop('no',axis=1,inplace=True)
+        df.drop(['no','images'],axis=1,inplace=True)
         print(df)
         records_today=self.db.ATTENDANCE_NET_TODAY.find({'_id':TIMEZONE.localize( dt.now().replace(hour=0,minute=0,second=0,microsecond=0))})
         df = pd.DataFrame(data=list(records_today))

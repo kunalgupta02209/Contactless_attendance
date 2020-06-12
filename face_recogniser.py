@@ -48,6 +48,7 @@ model=load_model('face_reco2.MODEL')
 cap=cv2.VideoCapture(0)
 ret=True
 # test()
+prediction_list = []
 while ret:
     ret,frame=cap.read()
     frame=cv2.flip(frame,1)
@@ -59,7 +60,6 @@ while ret:
             k=coor[i]
             f=detected
             detected=cv2.resize(detected,(160,160))
-            #detected=np.rollaxis(detected,2,0)
             detected=detected.astype('float')/255.0
             detected=np.expand_dims(detected,axis=0)
             feed=e.calculate(detected)
@@ -70,6 +70,7 @@ while ret:
             if(np.max(prediction)>.70):
                 for i in people.keys():
                     if(result==i):
+                        prediction_list.append(i)
                         label=people[i]['_id']
                         data.update(label)
                         label=people[i]['name']
