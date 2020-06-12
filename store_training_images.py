@@ -23,7 +23,6 @@ while ret:
         cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2,cv2.LINE_AA)
         pic_no=pic_no+1
         img_arr.append(cropped)
-        # cv2.imwrite('people/'+name+'/'+str(pic_no)+'.jpg',cropped)
     cv2.imshow('frame',frame)
     cv2.waitKey(100)
 

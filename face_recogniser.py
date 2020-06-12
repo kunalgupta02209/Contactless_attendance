@@ -4,6 +4,7 @@ from keras.models import load_model
 from db_util import database
 import pymongo
 from pymongo.errors import DuplicateKeyError
+from collections import Counter
 
 class face:
     def __init__(self):
@@ -67,15 +68,23 @@ while ret:
             prediction=model.predict(feed)[0]
 
             result=int(np.argmax(prediction))
-            if(np.max(prediction)>.70):
+            if(np.max(prediction)>.80):
                 for i in people.keys():
                     if(result==i):
                         prediction_list.append(i)
-                        label=people[i]['_id']
-                        data.update(label)
-                        label=people[i]['name']
             else:
-                label='unknown'
+                prediction_list.append('unknown')
+            if len(prediction_list) > 50:
+                count = Counter(prediction_list)
+                max_key = max(count, key=count.get)
+                if max_key != 'unknown':
+                    label=people[max_key]['_id']
+                    data.update(label)
+                    label=people[i]['name']
+                    prediction_list = []
+                else:
+                    label='unknown'
+                    prediction_list = []
 
 
             cv2.putText(frame,label,(k[0],k[1]),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),2)
