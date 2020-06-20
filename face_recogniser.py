@@ -68,19 +68,20 @@ while ret:
             prediction=model.predict(feed)[0]
 
             result=int(np.argmax(prediction))
-            if(np.max(prediction)>.80):
+            if(np.max(prediction)>.90):
                 for i in people.keys():
                     if(result==i):
                         prediction_list.append(i)
             else:
                 prediction_list.append('unknown')
-            if len(prediction_list) > 50:
+            if len(prediction_list) > 100:
                 count = Counter(prediction_list)
                 max_key = max(count, key=count.get)
+                print(count)
                 if max_key != 'unknown':
                     label=people[max_key]['_id']
                     data.update(label)
-                    label=people[i]['name']
+                    label=people[max_key]['name']
                     prediction_list = []
                 else:
                     label='unknown'
